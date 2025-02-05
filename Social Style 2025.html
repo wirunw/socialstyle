@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>แบบทดสอบ Social Styles</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f5f5f5;
+      padding: 20px;
+    }
+    h1, h2 {
+      text-align: center;
+    }
+    p.instructions {
+      text-align: center;
+      font-size: 1.1em;
+      margin-bottom: 30px;
+    }
+    .question {
+      background-color: #fff;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      padding: 15px;
+      margin-bottom: 20px;
+    }
+    .question legend {
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+    .option {
+      display: block;
+      margin: 8px 0;
+      cursor: pointer;
+    }
+    #submitBtn {
+      display: block;
+      margin: 20px auto;
+      padding: 10px 20px;
+      font-size: 16px;
+    }
+    #result {
+      background-color: #fff;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      padding: 15px;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <h1>แบบทดสอบ Social Styles</h1>
+  <p class="instructions">ตรวจสอบคำในแต่ละชุด และเลือกว่าข้อไหนอธิบายตัวคุณได้เหมาะสมที่สุดเพียงข้อเดียว</p>
+  <form id="questionnaireForm">
+    <!-- Questions will be dynamically injected here -->
+  </form>
+  <button id="submitBtn">ส่งคำตอบ</button>
+
+  <div id="result" style="display:none;">
+    <h2>ผลลัพธ์</h2>
+    <div id="resultContent"></div>
+  </div>
+
+  <script>
+    // Define the questions array with options and mapping.
+    // The "mapping" object maps each option letter to a social style,
+    // as provided by the answer sheet.
+    const questions = [
+      {
+        id: 1,
+        text: "ข้อ 1",
+        options: {
+          a: "ที่โน้มน้าวใจเก่ง Persuasive",
+          b: "ค่อนข้างขี้กลัว Fearful",
+          c: "เปิดใจกว้าง Open-minded",
+          d: "เป็นต้นแบบ Original"
+        },
+        mapping: {
+          a: "Driver",
+          b: "Amiable",
+          c: "Analytical",
+          d: "Expressive"
+        }
+      },
+      {
+        id: 2,
+        text: "ข้อ 2",
+        options: {
+          a: "รอบคอบ Cautious",
+          b: "โน้มน้าวใจเก่ง Convincing",
+          c: "ก้าวร้าว Aggressive",
+          d: "จิตใจดี Good-natured"
+        },
+        mapping: {
+          a: "Analytical",
+          b: "Expressive",
+          c: "Driver",
+          d: "Amiable"
+        }
+      },
+      {
+        id: 3,
+        text: "ข้อ 3",
+        options: {
+          a: "เรื่อยๆ Docile-passive",
+          b: "มุ่งมั่น Dogged-determined",
+          c: "เปิดใจกว้าง Open-minded",
+          d: "กล้า Bold"
+        },
+        mapping: {
+          a: "Amiable",
+          b: "Driver",
+          c: "Analytical",
+          d: "Expressive"
+        }
+      },
+      {
+        id: 4,
+        text: "ข้อ 4",
+        options: {
+          a: "มีเสน่ห์ Charming",
+          b: "ซื่อสัตย์ Loyal",
+          c: "มุ่งมั่น Determined",
+          d: "ใจเย็น Even-tempered"
+        },
+        mapping: {
+          a: "Expressive",
+          b: "Amiable",
+          c: "Driver",
+          d: "Analytical"
+        }
+      },
+      {
+        id: 5,
+        text: "ข้อ 5",
+        options: {
+          a: "เต็มอกเต็มใจ Willing",
+          b: "กระตือรือร้น Eager",
+          c: "หยิ่งยโส Nervy",
+          d: "มุ่งมั่น Strong-willed"
+        },
+        mapping: {
+          a: "Amiable",
+          b: "Expressive",
+          c: "Analytical",
+          d: "Driver"
+        }
+      },
+      {
+        id: 6,
+        text: "ข้อ 6",
+        options: {
+          a: "ร่วมมือ Agreeable",
+          b: "เปี่ยมด้วยพลัง High-spirited",
+          c: "มั่นอกมั่นใจ Confident",
+          d: "ใจเย็น Even-tempered"
+        },
+        mapping: {
+          a: "Amiable",
+          b: "Expressive",
+          c: "Driver",
+          d: "Analytical"
+        }
+      },
+      {
+        id: 7,
+        text: "ข้อ 7",
+        options: {
+          a: "ตามใจผู้อื่น Obliging",
+          b: "กล้าแสดงออก Assertive",
+          c: "เที่ยงตรง Precise",
+          d: "มีชีวิตชีวา Animated"
+        },
+        mapping: {
+          a: "Amiable",
+          b: "Driver",
+          c: "Analytical",
+          d: "Expressive"
+        }
+      },
+      {
+        id: 8,
+        text: "ข้อ 8",
+        options: {
+          a: "มีระเบียบ Disciplined",
+          b: "เป็นมิตร Cheerful",
+          c: "กระสับกระส่าย Restless",
+          d: "ยอมตามผู้อื่น Resigned-submissive"
+        },
+        mapping: {
+          a: "Driver",
+          b: "Amiable",
+          c: "Expressive",
+          d: "Analytical"
+        }
+      },
+      {
+        id: 9,
+        text: "ข้อ 9",
+        options: {
+          a: "เห็นอกเห็นใจ Sympathetic",
+          b: "ดื้อรั้น Persistent",
+          c: "เชื่อฟัง Obedient",
+          d: "ตอบสนองฉับไว Spontaneous"
+        },
+        mapping: {
+          a: "Amiable",
+          b: "Driver",
+          c: "Analytical",
+          d: "Expressive"
+        }
+      },
+      {
+        id: 10,
+        text: "ข้อ 10",
+        options: {
+          a: "ชอบการแข่งขัน Competitive",
+          b: "อดทน Tolerant",
+          c: "จู้จี้จุกจิก Fussy",
+          d: "คิดริเริ่ม Pioneering"
+        },
+        mapping: {
+          a: "Driver",
+          b: "Amiable",
+          c: "Analytical",
+          d: "Expressive"
+        }
+      },
+      {
+        id: 11,
+        text: "ข้อ 11",
+        options: {
+          a: "น่านับถือ Respectful",
+          b: "ร่าเริง Jovial",
+          c: "มีอิทธิพลต่อผู้อื่น Influential",
+          d: "มองโลกแง่ดี Optimistic"
+        },
+        mapping: {
+          a: "Analytical",
+          b: "Amiable",
+          c: "Expressive",
+          d: "Driver"
+        }
+      },
+      {
+        id: 12,
+        text: "ข้อ 12",
+        options: {
+          a: "ใจกว้าง Generous",
+          b: "ไม่ยอมแพ้ Unconquerable",
+          c: "เป็นแรงบันดาลใจให้ผู้อื่น Inspiring",
+          d: "โอนอ่อนผ่อนตาม Submissive"
+        },
+        mapping: {
+          a: "Amiable",
+          b: "Driver",
+          c: "Expressive",
+          d: "Analytical"
+        }
+      },
+      {
+        id: 13,
+        text: "ข้อ 13",
+        options: {
+          a: "เอาใจใส่ Considerate",
+          b: "กล้าหาญ Brave",
+          c: "ขี้เกรงใจ Timid",
+          d: "ปรับเปลี่ยนได้ Adaptable"
+        },
+        mapping: {
+          a: "Amiable",
+          b: "Driver",
+          c: "Analytical",
+          d: "Expressive"
+        }
+      },
+      {
+        id: 14,
+        text: "ข้อ 14",
+        options: {
+          a: "ชอบโต้แย้ง Argumentative",
+          b: "ใจดี Kind",
+          c: "วางเฉย Nonchalant / laid-back",
+          d: "อดทน Patient"
+        },
+        mapping: {
+          a: "Driver",
+          b: "Amiable",
+          c: "Expressive",
+          d: "Analytical"
+        }
+      },
+      {
+        id: 15,
+        text: "ข้อ 15",
+        options: {
+          a: "ยืนหยัดในสิ่งที่ตัวเองคิด Self-reliant",
+          b: "ขี้เล่น สนุกสนาน Lighthearted",
+          c: "พูดจาดี Soft spoken",
+          d: "น่าไว้วางใจ Trusting"
+        },
+        mapping: {
+          a: "Driver",
+          b: "Amiable",
+          c: "Expressive",
+          d: "Analytical"
+        }
+      },
+      {
+        id: 16,
+        text: "ข้อ 16",
+        options: {
+          a: "ชอบผจญภัย Adventurous",
+          b: "รักสงบ Peaceful",
+          c: "มองแง่บวก Positive",
+          d: "เป็นกลาง Moderate"
+        },
+        mapping: {
+          a: "Expressive",
+          b: "Amiable",
+          c: "Driver",
+          d: "Analytical"
+        }
+      },
+      {
+        id: 17,
+        text: "ข้อ 17",
+        options: {
+          a: "เป็นมิตร จริงใจ Cordial",
+          b: "เคร่งครัด Vigorous",
+          c: "เปิดกว้าง Receptive",
+          d: "ควบคุมตนเอง Controlled"
+        },
+        mapping: {
+          a: "Expressive",
+          b: "Driver",
+          c: "Amiable",
+          d: "Analytical"
+        }
+      },
+      {
+        id: 18,
+        text: "ข้อ 18",
+        options: {
+          a: "เที่ยงตรง Accurate",
+          b: "เข้ากับผู้อื่นได้ดี Good mixer",
+          c: "กล้าตัดสินใจ Decisive",
+          d: "อ่อนโยน Lenient"
+        },
+        mapping: {
+          a: "Analytical",
+          b: "Expressive",
+          c: "Driver",
+          d: "Amiable"
+        }
+      },
+      {
+        id: 19,
+        text: "ข้อ 19",
+        options: {
+          a: "ช่างพูดช่างคุย Talkative",
+          b: "เป็นแบบแผน Conventional",
+          c: "กล้าพูด Outspoken",
+          d: "พึงพอใจ Satisfied"
+        },
+        mapping: {
+          a: "Expressive",
+          b: "Analytical",
+          c: "Driver",
+          d: "Amiable"
+        }
+      },
+      {
+        id: 20,
+        text: "ข้อ 20",
+        options: {
+          a: "กล้าบ้าบิ่น Audacious-daring",
+          b: "เป็นที่นิยม Popular",
+          c: "น่าคบหา Companionable",
+          d: "เรียบร้อย Polished"
+        },
+        mapping: {
+          a: "Driver",
+          b: "Amiable",
+          c: "Expressive",
+          d: "Analytical"
+        }
+      }
+    ];
+
+    // Wait until the DOM is fully loaded
+    document.addEventListener('DOMContentLoaded', () => {
+      const form = document.getElementById('questionnaireForm');
+
+      // Dynamically render each question and its options
+      questions.forEach(question => {
+        const fieldset = document.createElement('fieldset');
+        fieldset.className = 'question';
+        
+        const legend = document.createElement('legend');
+        legend.textContent = question.text;
+        fieldset.appendChild(legend);
+
+        // Create radio buttons for each option
+        for (let option in question.options) {
+          if (question.options.hasOwnProperty(option)) {
+            const label = document.createElement('label');
+            label.className = 'option';
+            
+            const radio = document.createElement('input');
+            radio.type = 'radio';
+            radio.name = `question${question.id}`;
+            radio.value = option;
+            
+            label.appendChild(radio);
+            label.appendChild(document.createTextNode(` ${option}. ${question.options[option]}`));
+            fieldset.appendChild(label);
+          }
+        }
+        form.appendChild(fieldset);
+      });
+
+      // Handle the submission of answers
+      document.getElementById('submitBtn').addEventListener('click', () => {
+        // Initialize scores for each social style
+        const scores = {
+          Analytical: 0,
+          Amiable: 0,
+          Expressive: 0,
+          Driver: 0
+        };
+
+        let allAnswered = true;
+
+        // Loop through each question to collect the answers and update scores
+        questions.forEach(question => {
+          const selected = document.querySelector(`input[name="question${question.id}"]:checked`);
+          if (!selected) {
+            allAnswered = false;
+          } else {
+            const chosenOption = selected.value;
+            const style = question.mapping[chosenOption];
+            if (style) {
+              scores[style]++;
+            }
+          }
+        });
+
+        if (!allAnswered) {
+          alert("กรุณาตอบทุกคำถามก่อนส่งคำตอบ");
+          return;
+        }
+
+        // Display the results
+        const resultDiv = document.getElementById('result');
+        const resultContent = document.getElementById('resultContent');
+        resultContent.innerHTML = `
+          <p>Analytical: ${scores.Analytical}</p>
+          <p>Amiable: ${scores.Amiable}</p>
+          <p>Expressive: ${scores.Expressive}</p>
+          <p>Driver: ${scores.Driver}</p>
+        `;
+        resultDiv.style.display = 'block';
+        resultDiv.scrollIntoView({ behavior: 'smooth' });
+      });
+    });
+  </script>
+</body>
+</html>
